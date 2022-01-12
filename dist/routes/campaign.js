@@ -117,9 +117,6 @@ const campaign = (app) => {
 					return yield new AgencyDAO_1.AgencyDAO().getAllAgenciesFrom(company, agency, permission);
 				});
 			const allAgencies = yield gettingAgencies();
-			if (permission === 'owner' || permission === 'admin') {
-				allAgencies.push('CompanyCampaigns');
-			}
 			if (permission === 'admin' || permission === ' owner') allAgencies.push('Campanhas Internas');
 			const agenciesToReturn = [];
 			try {

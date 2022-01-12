@@ -54,14 +54,10 @@ const campaign = (app: { [key: string]: any }): void => {
 		const gettingAgencies = async () => {
 			return await new AgencyDAO().getAllAgenciesFrom(company, agency, permission);
 		};
-
 		const allAgencies: string[] = await gettingAgencies();
-		if (permission === 'owner' || permission === 'admin') {
-			allAgencies.push('CompanyCampaigns');
-		}
 		if (permission === 'admin' || permission === ' owner') allAgencies.push('Campanhas Internas');
 		const agenciesToReturn: {
-			[key: string]: { campaignName: string; campaignId: string; agency: string; activate: boolean }[];
+			[key: string]: { campaignName: string; campaignId: string; agency: string; active: boolean }[];
 		}[] = [];
 		for await (const agencyInfos of allAgencies) {
 			try {

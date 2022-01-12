@@ -74,7 +74,7 @@ export class AgencyDAO {
 									userPermission,
 									documentSnapshot.get('company'),
 									documentSnapshot.get('email'),
-									documentSnapshot.get('activate'),
+									documentSnapshot.get('active'),
 									documentSnapshot.get('agency')
 								);
 								users.push(user);

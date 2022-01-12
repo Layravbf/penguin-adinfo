@@ -8,7 +8,7 @@ export class User {
 	private _email: string;
 	private _id: string;
 	private _password: string;
-	private _activate: boolean;
+	private _active: boolean;
 	private _salt = parseInt(process.env.SALT);
 
 	constructor(
@@ -16,7 +16,7 @@ export class User {
 		permission: string,
 		company: string,
 		email: string,
-		activate = true,
+		active = true,
 		agency = '',
 		password?: string
 	) {
@@ -26,7 +26,7 @@ export class User {
 		this._email = email;
 		this._id = id;
 		this._password = password;
-		this._activate = activate;
+		this._active = active;
 	}
 
 	/**
@@ -49,7 +49,7 @@ export class User {
 			permission: this._permission,
 			email: this._email,
 			id: this._id,
-			activate: this._activate,
+			active: this._active,
 		};
 	}
 
@@ -63,7 +63,7 @@ export class User {
 			company: this._company,
 			permission: this._permission,
 			email: this._email,
-			activate: this._activate,
+			active: this._active,
 			password: bcrypt.hashSync(this._password, this._salt),
 		};
 	}
@@ -88,8 +88,8 @@ export class User {
 		return this._email;
 	}
 
-	get activate(): boolean {
-		return this._activate;
+	get active(): boolean {
+		return this._active;
 	}
 
 	get id(): string {

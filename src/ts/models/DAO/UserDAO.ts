@@ -73,7 +73,7 @@ export class UserDAO {
 									userPermission,
 									documentSnapshot.get('company'),
 									documentSnapshot.get('email'),
-									documentSnapshot.get('activate'),
+									documentSnapshot.get('active'),
 									documentSnapshot.get('agency')
 								);
 								users.push(user);
@@ -112,7 +112,7 @@ export class UserDAO {
 								documentSnapshot.get('permission'),
 								documentSnapshot.get('company'),
 								documentSnapshot.get('email'),
-								documentSnapshot.get('activate'),
+								documentSnapshot.get('active'),
 								documentSnapshot.get('agency')
 							);
 						} else {
@@ -182,9 +182,9 @@ export class UserDAO {
 					user.permission === 'user' ||
 					((user.permission === 'admin' || user.permission === 'agencyOwner') && userRequestPermission === 'owner')
 				) {
-					user.activate = false;
+					user.active = false;
 				} else if (user.permission === 'agencyOwner' && userRequestPermission === 'admin') {
-					user.activate = false;
+					user.active = false;
 				} else {
 					throw new Error('Permissões insuficientes para inavitar o usuário!');
 				}
@@ -215,9 +215,9 @@ export class UserDAO {
 					user.permission === 'user' ||
 					((user.permission === 'admin' || user.permission === 'agencyOwner') && userRequestPermission === 'owner')
 				) {
-					user.activate = true;
+					user.active = true;
 				} else if (user.permission === 'agencyOwner' && userRequestPermission === 'admin') {
-					user.activate = true;
+					user.active = true;
 				} else {
 					throw new Error('Permissões insuficientes para inavitar o usuário!');
 				}

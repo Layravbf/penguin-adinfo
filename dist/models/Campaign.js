@@ -2,12 +2,12 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.Campaign = void 0;
 class Campaign {
-	constructor(name, company, agency, campaignId, activate, created) {
+	constructor(name, company, agency, campaignId, active, created) {
 		this._name = name;
 		this._company = company;
 		this._agency = agency;
 		this._campaignId = campaignId;
-		this._activate = activate;
+		this._active = active;
 		this._created = created;
 	}
 	toJson() {
@@ -17,11 +17,11 @@ class Campaign {
 			agency: this._agency,
 			campaignId: this._campaignId,
 			created: this._created,
-			activate: this._activate,
+			active: this._active,
 		};
 	}
 	validateCampaignInfos() {
-		return !(!this._name || !this._company || !this._agency || !this._campaignId || !this._activate || !this._created);
+		return !(!this._name || !this._company || !this._agency || !this._campaignId || !this._active || !this._created);
 	}
 	get name() {
 		return this._name;
@@ -35,8 +35,8 @@ class Campaign {
 	get created() {
 		return this._created;
 	}
-	get activate() {
-		return this._activate;
+	get active() {
+		return this._active;
 	}
 	get campaignId() {
 		return this._campaignId;

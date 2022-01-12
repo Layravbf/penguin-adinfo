@@ -56,7 +56,7 @@ export class CampaignDAO {
 	public getAllCampaignsFrom(
 		agency: string,
 		userRequestPermission: string
-	): Promise<{ campaignName: string; campaignId: string; agency: string; activate: boolean }[]> {
+	): Promise<{ campaignName: string; campaignId: string; agency: string; active: boolean }[]> {
 		return this._objectStore
 			.getCollection(this._pathToCollection)
 			.where('agency', '==', agency)
@@ -67,22 +67,22 @@ export class CampaignDAO {
 				}
 				if (querySnapshot.size > 0) {
 					const agencia = agency !== 'Campanhas Internas' ? agency : 'CompanyCampaigns';
-					const campaigns: { campaignName: string; campaignId: string; agency: string; activate: boolean }[] = [];
+					const campaigns: { campaignName: string; campaignId: string; agency: string; active: boolean }[] = [];
 					querySnapshot.forEach((documentSnapshot) => {
 						const documentAgency = documentSnapshot.get('agency');
 						if (agencia === documentAgency) {
-							const campaignInfos: { campaignName: string; campaignId: string; agency: string; activate: boolean } = {
+							const campaignInfos: { campaignName: string; campaignId: string; agency: string; active: boolean } = {
 								campaignName: documentSnapshot.get('name'),
 								campaignId: documentSnapshot.get('campaignId'),
 								agency: documentSnapshot.get('agency'),
-								activate: documentSnapshot.get('activate'),
+								active: documentSnapshot.get('active'),
 							};
 							if (
 								campaignInfos.campaignName &&
 								campaignInfos.campaignId &&
 								campaignInfos.agency &&
-								campaignInfos.activate !== null &&
-								campaignInfos.activate !== undefined &&
+								campaignInfos.active !== null &&
+								campaignInfos.active !== undefined &&
 								!campaigns.includes(campaignInfos)
 							) {
 								campaigns.push(campaignInfos);
@@ -163,7 +163,7 @@ export class CampaignDAO {
 					querySnapshot.forEach((doc) => {
 						const campaign = doc.data();
 						if (userRequestPermission !== 'user') {
-							campaign.activate = false;
+							campaign.active = false;
 						} else {
 							throw new Error('Permissões insuficientes para inavitar a campanha!');
 						}
@@ -197,7 +197,7 @@ export class CampaignDAO {
 					querySnapshot.forEach((doc) => {
 						const campaign = doc.data();
 						if (userRequestPermission !== 'user') {
-							campaign.activate = true;
+							campaign.active = true;
 						} else {
 							throw new Error('Permissões insuficientes para reativar a campanha!');
 						}

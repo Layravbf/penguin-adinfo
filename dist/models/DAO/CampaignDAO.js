@@ -53,14 +53,14 @@ class CampaignDAO {
 								campaignName: documentSnapshot.get('name'),
 								campaignId: documentSnapshot.get('campaignId'),
 								agency: documentSnapshot.get('agency'),
-								activate: documentSnapshot.get('activate'),
+								active: documentSnapshot.get('active'),
 							};
 							if (
 								campaignInfos.campaignName &&
 								campaignInfos.campaignId &&
 								campaignInfos.agency &&
-								campaignInfos.activate !== null &&
-								campaignInfos.activate !== undefined &&
+								campaignInfos.active !== null &&
+								campaignInfos.active !== undefined &&
 								!campaigns.includes(campaignInfos)
 							) {
 								campaigns.push(campaignInfos);
@@ -123,7 +123,7 @@ class CampaignDAO {
 					querySnapshot.forEach((doc) => {
 						const campaign = doc.data();
 						if (userRequestPermission !== 'user') {
-							campaign.activate = false;
+							campaign.active = false;
 						} else {
 							throw new Error('Permissões insuficientes para inavitar a campanha!');
 						}
@@ -150,7 +150,7 @@ class CampaignDAO {
 					querySnapshot.forEach((doc) => {
 						const campaign = doc.data();
 						if (userRequestPermission !== 'user') {
-							campaign.activate = true;
+							campaign.active = true;
 						} else {
 							throw new Error('Permissões insuficientes para reativar a campanha!');
 						}

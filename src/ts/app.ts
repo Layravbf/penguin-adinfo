@@ -70,7 +70,7 @@ app.all('*', async (req: { [key: string]: any }, res: { [key: string]: any }, ne
 				payload.permission,
 				payload.company,
 				payload.email,
-				payload.activate,
+				payload.active,
 				payload.agency
 			);
 
@@ -81,7 +81,7 @@ app.all('*', async (req: { [key: string]: any }, res: { [key: string]: any }, ne
 				.then((querySnapshot: QuerySnapshot) => {
 					if (querySnapshot.size > 0) {
 						querySnapshot.forEach((documentSnapshot) => {
-							if (!documentSnapshot.get('activate')) {
+							if (!documentSnapshot.get('active')) {
 								throw new Error('Usuário sem permissão para realizar esta ação!');
 							}
 						});
@@ -97,7 +97,7 @@ app.all('*', async (req: { [key: string]: any }, res: { [key: string]: any }, ne
 				user: user.id,
 				route: req.originalUrl,
 				email: user.email,
-				activate: user.activate,
+				active: user.active,
 				headers: req.headers,
 				body: req.body,
 			};

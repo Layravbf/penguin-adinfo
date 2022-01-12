@@ -95,7 +95,7 @@ app.all('*', (req, res, next) =>
 					payload.permission,
 					payload.company,
 					payload.email,
-					payload.activate,
+					payload.active,
 					payload.agency
 				);
 				yield FirestoreConnectionSingleton_1.FirestoreConnectionSingleton.getInstance()
@@ -105,7 +105,7 @@ app.all('*', (req, res, next) =>
 					.then((querySnapshot) => {
 						if (querySnapshot.size > 0) {
 							querySnapshot.forEach((documentSnapshot) => {
-								if (!documentSnapshot.get('activate')) {
+								if (!documentSnapshot.get('active')) {
 									throw new Error('Usuário sem permissão para realizar esta ação!');
 								}
 							});
@@ -120,7 +120,7 @@ app.all('*', (req, res, next) =>
 					user: user.id,
 					route: req.originalUrl,
 					email: user.email,
-					activate: user.activate,
+					active: user.active,
 					headers: req.headers,
 					body: req.body,
 				};
