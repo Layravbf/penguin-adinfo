@@ -85,8 +85,8 @@ resource "google_app_engine_standard_app_version" "adinfo" {
 ######################################################
 resource "google_firestore_document" "mydoc" {
   project     = var.project_id
-  collection  = "companies"
-  document_id = var.company
+  collection  = "advertisers"
+  document_id = var.advertiser
   fields      = "{}"
 }
 
