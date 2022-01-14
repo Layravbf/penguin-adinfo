@@ -51,14 +51,14 @@ export class UserDAO {
 
 	/**
 	 * Retorna todos os usuários não owners da empresa
-	 * @param company Empresa(company) dos usuários a serem buscados
+	 * @param advertiser Empresa(advertiser) dos usuários a serem buscados
 	 * @param userRequestPermission permissão do usuario que solicitou a alteração
 	 * @returns Lista de usuários
 	 */
-	public getAllUsersFrom(company: string, userRequestPermission: string): Promise<User[] | void> {
+	public getAllUsersFrom(advertiser: string, userRequestPermission: string): Promise<User[] | void> {
 		return this._objectStore
 			.getCollection(this._pathToCollection)
-			.where('company', '==', company)
+			.where('advertiser', '==', advertiser)
 			.get()
 			.then((querySnapshot: QuerySnapshot) => {
 				if (querySnapshot.size > 0) {
@@ -71,10 +71,10 @@ export class UserDAO {
 								const user = new User(
 									searchId[0],
 									userPermission,
-									documentSnapshot.get('company'),
+									documentSnapshot.get('advertiser'),
 									documentSnapshot.get('email'),
 									documentSnapshot.get('active'),
-									documentSnapshot.get('agency')
+									documentSnapshot.get('adOpsTeam')
 								);
 								users.push(user);
 							}
@@ -110,10 +110,10 @@ export class UserDAO {
 							user = new User(
 								searchId[0],
 								documentSnapshot.get('permission'),
-								documentSnapshot.get('company'),
+								documentSnapshot.get('advertiser'),
 								documentSnapshot.get('email'),
 								documentSnapshot.get('active'),
-								documentSnapshot.get('agency')
+								documentSnapshot.get('adOpsTeam')
 							);
 						} else {
 							throw new Error('Nenhum usuário encontrado!');
@@ -180,10 +180,10 @@ export class UserDAO {
 				const user = doc.data();
 				if (
 					user.permission === 'user' ||
-					((user.permission === 'admin' || user.permission === 'agencyOwner') && userRequestPermission === 'owner')
+					((user.permission === 'admin' || user.permission === 'adOpsTeamLeader') && userRequestPermission === 'owner')
 				) {
 					user.active = false;
-				} else if (user.permission === 'agencyOwner' && userRequestPermission === 'admin') {
+				} else if (user.permission === 'adOpsTeamLeader' && userRequestPermission === 'admin') {
 					user.active = false;
 				} else {
 					throw new Error('Permissões insuficientes para inavitar o usuário!');
@@ -213,10 +213,10 @@ export class UserDAO {
 				const user = doc.data();
 				if (
 					user.permission === 'user' ||
-					((user.permission === 'admin' || user.permission === 'agencyOwner') && userRequestPermission === 'owner')
+					((user.permission === 'admin' || user.permission === 'adOpsTeamLeader') && userRequestPermission === 'owner')
 				) {
 					user.active = true;
-				} else if (user.permission === 'agencyOwner' && userRequestPermission === 'admin') {
+				} else if (user.permission === 'adOpsTeamLeader' && userRequestPermission === 'admin') {
 					user.active = true;
 				} else {
 					throw new Error('Permissões insuficientes para inavitar o usuário!');

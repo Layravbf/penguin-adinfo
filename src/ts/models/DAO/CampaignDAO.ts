@@ -5,14 +5,14 @@ import { Campaign } from '../Campaign';
 
 export class CampaignDAO {
 	private _campaignName: string;
-	private _agency: string;
+	private _adOpsTeam: string;
 	private _objectStore: ObjectStore;
 	private _authCollection: CollectionReference;
 	private _pathToCollection: string[];
 
-	constructor(campaign?: string, agency?: string) {
+	constructor(campaign?: string, adOpsTeam?: string) {
 		this._campaignName = campaign;
-		this._agency = agency;
+		this._adOpsTeam = adOpsTeam;
 		this._objectStore = FirestoreConnectionSingleton.getInstance();
 		this._pathToCollection = ['campaigns'];
 		this._authCollection = this._objectStore.getCollection(this._pathToCollection);
@@ -49,38 +49,38 @@ export class CampaignDAO {
 
 	/**
 	 * Retorna todas as agências de uma companhia
-	 * @param agency Agência das campanhas a serem buscados
+	 * @param adOpsTeam Agência das campanhas a serem buscados
 	 * @param userRequestPermission permissão do usuario que solicitou a alteração
 	 * @returns Lista Objetos contendo atributos de cada campanha
 	 */
 	public getAllCampaignsFrom(
-		agency: string,
+		adOpsTeam: string,
 		userRequestPermission: string
-	): Promise<{ campaignName: string; campaignId: string; agency: string; active: boolean }[]> {
+	): Promise<{ campaignName: string; campaignId: string; adOpsTeam: string; active: boolean }[]> {
 		return this._objectStore
 			.getCollection(this._pathToCollection)
-			.where('agency', '==', agency)
+			.where('adOpsTeam', '==', adOpsTeam)
 			.get()
 			.then((querySnapshot: QuerySnapshot) => {
-				if (!agency && (userRequestPermission === 'user' || userRequestPermission === 'agencyOwner')) {
+				if (!adOpsTeam && (userRequestPermission === 'user' || userRequestPermission === 'adOpsTeamLeader')) {
 					throw new Error('Nenhuma campanha foi selecionada!');
 				}
 				if (querySnapshot.size > 0) {
-					const agencia = agency !== 'Campanhas Internas' ? agency : 'CompanyCampaigns';
-					const campaigns: { campaignName: string; campaignId: string; agency: string; active: boolean }[] = [];
+					const adOpsTeamName = adOpsTeam !== 'Campanhas Internas' ? adOpsTeam : 'AdvertiserCampaigns';
+					const campaigns: { campaignName: string; campaignId: string; adOpsTeam: string; active: boolean }[] = [];
 					querySnapshot.forEach((documentSnapshot) => {
-						const documentAgency = documentSnapshot.get('agency');
-						if (agencia === documentAgency) {
-							const campaignInfos: { campaignName: string; campaignId: string; agency: string; active: boolean } = {
+						const documentAdOpsTeam = documentSnapshot.get('adOpsTeam');
+						if (adOpsTeamName === documentAdOpsTeam) {
+							const campaignInfos: { campaignName: string; campaignId: string; adOpsTeam: string; active: boolean } = {
 								campaignName: documentSnapshot.get('name'),
 								campaignId: documentSnapshot.get('campaignId'),
-								agency: documentSnapshot.get('agency'),
+								adOpsTeam: documentSnapshot.get('adOpsTeam'),
 								active: documentSnapshot.get('active'),
 							};
 							if (
 								campaignInfos.campaignName &&
 								campaignInfos.campaignId &&
-								campaignInfos.agency &&
+								campaignInfos.adOpsTeam &&
 								campaignInfos.active !== null &&
 								campaignInfos.active !== undefined &&
 								!campaigns.includes(campaignInfos)
@@ -108,7 +108,7 @@ export class CampaignDAO {
 	 */
 	public addCampaign(campaign: Campaign): Promise<boolean> {
 		return this._objectStore
-			.addDocumentIn(this._authCollection, campaign.toJson(), campaign.name + ' - ' + campaign.agency)
+			.addDocumentIn(this._authCollection, campaign.toJson(), campaign.name + ' - ' + campaign.adOpsTeam)
 			.get()
 			.then(() => {
 				return true;
@@ -132,7 +132,7 @@ export class CampaignDAO {
 				if (querySnapshot.size > 0) {
 					querySnapshot.forEach((documentSnapshot) => {
 						const id = documentSnapshot.get('campaignId');
-						if (this._agency === documentSnapshot.get('agency')) {
+						if (this._adOpsTeam === documentSnapshot.get('adOpsTeam')) {
 							return id;
 						} else {
 							throw new Error('Falha ao recuperar o ID da campanha!');

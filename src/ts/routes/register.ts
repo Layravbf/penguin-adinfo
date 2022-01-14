@@ -14,20 +14,20 @@ const register = (app: { [key: string]: any }): void => {
 
 			const apiResponse = new ApiResponse();
 
-			let agency = '';
+			let adOpsTeam = '';
 
-			if (req.agency && req.body.permission === 'user') {
-				agency = req.agency;
-			} else if (req.body.agency && req.body.permission === 'agencyOwner') {
-				agency = req.body.agency;
+			if (req.adOpsTeam && req.body.permission === 'user') {
+				adOpsTeam = req.adOpsTeam;
+			} else if (req.body.adOpsTeam && req.body.permission === 'adOpsTeamLeader') {
+				adOpsTeam = req.body.adOpsTeam;
 			} else if (
-				!req.agency &&
-				!req.body.agency &&
-				(req.body.permission === 'user' || req.body.permission === 'agencyOwner')
+				!req.adOpsTeam &&
+				!req.body.adOpsTeam &&
+				(req.body.permission === 'user' || req.body.permission === 'adOpsTeamLeader')
 			) {
 				validationErrors.push({
 					param: 'email',
-					value: req.body.agency,
+					value: req.body.adOpsTeam,
 					location: 'body',
 					msg: 'Não foi possível encontrar a agência.',
 				});
@@ -41,7 +41,15 @@ const register = (app: { [key: string]: any }): void => {
 				return;
 			}
 
-			const newUser = new User('', req.body.permission, req.company, req.body.email, true, agency, req.body.password);
+			const newUser = new User(
+				'',
+				req.body.permission,
+				req.advertiser,
+				req.body.email,
+				true,
+				adOpsTeam,
+				req.body.password
+			);
 
 			const userDAO = new UserDAO();
 			userDAO

@@ -3,9 +3,9 @@ Object.defineProperty(exports, '__esModule', { value: true });
 exports.CampaignDAO = void 0;
 const FirestoreConnectionSingleton_1 = require('../cloud/FirestoreConnectionSingleton');
 class CampaignDAO {
-	constructor(campaign, agency) {
+	constructor(campaign, adOpsTeam) {
 		this._campaignName = campaign;
-		this._agency = agency;
+		this._adOpsTeam = adOpsTeam;
 		this._objectStore = FirestoreConnectionSingleton_1.FirestoreConnectionSingleton.getInstance();
 		this._pathToCollection = ['campaigns'];
 		this._authCollection = this._objectStore.getCollection(this._pathToCollection);
@@ -34,31 +34,31 @@ class CampaignDAO {
 				throw err;
 			});
 	}
-	getAllCampaignsFrom(agency, userRequestPermission) {
+	getAllCampaignsFrom(adOpsTeam, userRequestPermission) {
 		return this._objectStore
 			.getCollection(this._pathToCollection)
-			.where('agency', '==', agency)
+			.where('adOpsTeam', '==', adOpsTeam)
 			.get()
 			.then((querySnapshot) => {
-				if (!agency && (userRequestPermission === 'user' || userRequestPermission === 'agencyOwner')) {
+				if (!adOpsTeam && (userRequestPermission === 'user' || userRequestPermission === 'adOpsTeamLeader')) {
 					throw new Error('Nenhuma campanha foi selecionada!');
 				}
 				if (querySnapshot.size > 0) {
-					const agencia = agency !== 'Campanhas Internas' ? agency : 'CompanyCampaigns';
+					const adOpsTeamName = adOpsTeam !== 'Campanhas Internas' ? adOpsTeam : 'AdvertiserCampaigns';
 					const campaigns = [];
 					querySnapshot.forEach((documentSnapshot) => {
-						const documentAgency = documentSnapshot.get('agency');
-						if (agencia === documentAgency) {
+						const documentAdOpsTeam = documentSnapshot.get('adOpsTeam');
+						if (adOpsTeamName === documentAdOpsTeam) {
 							const campaignInfos = {
 								campaignName: documentSnapshot.get('name'),
 								campaignId: documentSnapshot.get('campaignId'),
-								agency: documentSnapshot.get('agency'),
+								adOpsTeam: documentSnapshot.get('adOpsTeam'),
 								active: documentSnapshot.get('active'),
 							};
 							if (
 								campaignInfos.campaignName &&
 								campaignInfos.campaignId &&
-								campaignInfos.agency &&
+								campaignInfos.adOpsTeam &&
 								campaignInfos.active !== null &&
 								campaignInfos.active !== undefined &&
 								!campaigns.includes(campaignInfos)
@@ -80,7 +80,7 @@ class CampaignDAO {
 	}
 	addCampaign(campaign) {
 		return this._objectStore
-			.addDocumentIn(this._authCollection, campaign.toJson(), campaign.name + ' - ' + campaign.agency)
+			.addDocumentIn(this._authCollection, campaign.toJson(), campaign.name + ' - ' + campaign.adOpsTeam)
 			.get()
 			.then(() => {
 				return true;
@@ -99,7 +99,7 @@ class CampaignDAO {
 				if (querySnapshot.size > 0) {
 					querySnapshot.forEach((documentSnapshot) => {
 						const id = documentSnapshot.get('campaignId');
-						if (this._agency === documentSnapshot.get('agency')) {
+						if (this._adOpsTeam === documentSnapshot.get('adOpsTeam')) {
 							return id;
 						} else {
 							throw new Error('Falha ao recuperar o ID da campanha!');

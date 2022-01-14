@@ -3,7 +3,7 @@ import { QuerySnapshot } from '@google-cloud/firestore';
 import { ObjectStore } from './ObjectStore';
 import { User } from '../User';
 
-export class AgencyDAO {
+export class AdOpsTeamDAO {
 	private _objectStore: ObjectStore;
 	private _pathToCollection: string[];
 
@@ -14,34 +14,34 @@ export class AgencyDAO {
 
 	/**
 	 * Retorna todas as agências de uma companhia
-	 * @param company Empresa(company) das agências a serem buscados
-	 * @param agency Empresa(company) das agências a serem buscados
+	 * @param advertiser Empresa(advertiser) das agências a serem buscados
+	 * @param adOpsTeam Empresa(advertiser) das agências a serem buscados
 	 * @param userRequestPermission permissão do usuario que solicitou a alteração
 	 * @returns Lista de agências
 	 */
-	public getAllAgenciesFrom(company: string, agency: string, userRequestPermission: string): Promise<string[]> {
+	public getAllAdOpsTeamsFrom(advertiser: string, adOpsTeam: string, userRequestPermission: string): Promise<string[]> {
 		return this._objectStore
 			.getCollection(['tokens'])
-			.where('company', '==', company)
+			.where('advertiser', '==', advertiser)
 			.get()
 			.then((querySnapshot: QuerySnapshot) => {
 				if (querySnapshot.size > 0) {
-					if (userRequestPermission === 'agencyOwner' || userRequestPermission === 'user') {
-						return [agency];
+					if (userRequestPermission === 'adOpsTeamLeader' || userRequestPermission === 'user') {
+						return [adOpsTeam];
 					}
-					const agencies: string[] = [];
+					const adOpsTeams: string[] = [];
 					querySnapshot.forEach((documentSnapshot) => {
 						const searchId = documentSnapshot.ref.path.match(new RegExp('[^/]+$'));
 						if (searchId) {
-							const userAgency = documentSnapshot.get('agency');
-							if (userAgency && !agencies.includes(userAgency)) {
-								agencies.push(userAgency);
+							const userAdOpsTeam = documentSnapshot.get('adOpsTeam');
+							if (userAdOpsTeam && !adOpsTeams.includes(userAdOpsTeam)) {
+								adOpsTeams.push(userAdOpsTeam);
 							}
 						} else {
 							throw new Error('Nenhuma agência encontrada!');
 						}
 					});
-					return agencies;
+					return adOpsTeams;
 				}
 			})
 			.catch((err) => {
@@ -51,14 +51,14 @@ export class AgencyDAO {
 
 	/**
 	 * Retorna todos os usuários de uma determinada agência
-	 * @param company Empresa(company) dos usuários a serem buscados
-	 * @param agency Agência da qual usuários serão buscados
+	 * @param advertiser Empresa(advertiser) dos usuários a serem buscados
+	 * @param adOpsTeam Agência da qual usuários serão buscados
 	 * @returns Lista de usuários
 	 */
-	public getAllUsersFromAgency(company: string, agency: string): Promise<User[] | void> {
+	public getAllUsersFromAdOpsTeam(advertiser: string, adOpsTeam: string): Promise<User[] | void> {
 		return this._objectStore
 			.getCollection(this._pathToCollection)
-			.where('company', '==', company)
+			.where('advertiser', '==', advertiser)
 			.get()
 			.then((querySnapshot: QuerySnapshot) => {
 				if (querySnapshot.size > 0) {
@@ -67,15 +67,15 @@ export class AgencyDAO {
 						const searchId = documentSnapshot.ref.path.match(new RegExp('[^/]+$'));
 						if (searchId) {
 							const userPermission = documentSnapshot.get('permission');
-							const userAgency = documentSnapshot.get('agency');
-							if ((userPermission === 'agencyOwner' || userPermission === 'user') && userAgency === agency) {
+							const userAdOpsTeam = documentSnapshot.get('adOpsTeam');
+							if ((userPermission === 'adOpsTeamLeader' || userPermission === 'user') && userAdOpsTeam === adOpsTeam) {
 								const user = new User(
 									searchId[0],
 									userPermission,
-									documentSnapshot.get('company'),
+									documentSnapshot.get('advertiser'),
 									documentSnapshot.get('email'),
 									documentSnapshot.get('active'),
-									documentSnapshot.get('agency')
+									documentSnapshot.get('adOpsTeam')
 								);
 								users.push(user);
 							}

@@ -30,8 +30,8 @@ app.use(
 	cors({
 		allowedHeaders: [
 			'token',
-			'agency',
-			'company',
+			'adOpsTeam',
+			'advertiser',
 			'campaign',
 			'Content-Type',
 			'file',
@@ -68,10 +68,10 @@ app.all('*', async (req: { [key: string]: any }, res: { [key: string]: any }, ne
 			const user = new User(
 				payload.id,
 				payload.permission,
-				payload.company,
+				payload.advertiser,
 				payload.email,
 				payload.active,
-				payload.agency
+				payload.adOpsTeam
 			);
 
 			await FirestoreConnectionSingleton.getInstance()
@@ -110,8 +110,8 @@ app.all('*', async (req: { [key: string]: any }, res: { [key: string]: any }, ne
 				res.statusCode(apiResponse.statusCode).send(apiResponse.jsonResponse);
 			}
 
-			req.company = user.company;
-			req.agency = user.agency;
+			req.advertiser = user.advertiser;
+			req.adOpsTeam = user.adOpsTeam;
 			req.email = user.email;
 			req.permission = user.permission;
 			req.token = req.headers.token;

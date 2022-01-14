@@ -10,7 +10,6 @@ const login = (app: { [key: string]: any }): void => {
 		new UserDAO(req.body.email, req.body.password)
 			.getUser()
 			.then((user: User) => {
-				console.log('to no then');
 				if (user.active) {
 					const token = new JWT(user).createToken();
 					res.set('Authorization', token);
@@ -22,7 +21,6 @@ const login = (app: { [key: string]: any }): void => {
 				}
 			})
 			.catch((err) => {
-				console.log('fui direto no catch');
 				apiResponse.statusCode = 500;
 				apiResponse.responseText = 'Email e/ou senha incorreto(s)!';
 				apiResponse.errorMessage = err.message;
