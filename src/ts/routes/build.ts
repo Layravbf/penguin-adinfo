@@ -25,7 +25,7 @@ const build = (app: { [key: string]: any }): void => {
 
 		const apiResponse = new ApiResponse();
 
-		if (!req.files || !req.files.data) {
+		if ((!req.files || !req.files.data) && !req.body.csv) {
 			apiResponse.responseText = 'Nenhum arquivo foi enviado!';
 			apiResponse.statusCode = 400;
 			res.status(apiResponse.statusCode).send(apiResponse.jsonResponse);
@@ -59,7 +59,7 @@ const build = (app: { [key: string]: any }): void => {
 
 		const fileName = DateUtils.generateDateString();
 
-		const fileContent = req.files.data.data;
+		const fileContent = req.files.data.data ? req.files.data.data : req.body.csv;
 
 		const filePath = `${company}/${agencyPath}/${campaign}/${DateUtils.generateDateString()}.csv`;
 
@@ -88,7 +88,10 @@ const build = (app: { [key: string]: any }): void => {
 				}
 			})
 			.then(async () => {
-				const csvContent = fileContent.toString();
+				let csvContent = fileContent;
+				if (req.files.data.data) {
+					csvContent = fileContent.toString();
+				}
 				const separator = CsvUtils.identifyCsvSepartor(csvContent.split('\n')[0], companyConfig.csvSeparator);
 				const jsonFromFile = CsvUtils.csv2json(csvContent, separator);
 				const jsonParameterized = new Builder(jsonFromFile, companyConfig, analyticsTool, media).build();
